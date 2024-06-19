@@ -1,8 +1,47 @@
 import pandas as pd
+from difflib import SequenceMatcher
 
-DF_2016 =pd.read_csv('2016.csv')
-DF_2017= pd.read_csv('2017.csv')
-DF_2018= pd.read_csv('2018.csv')
-DF_2019= pd.read_csv('2019.csv')
-DF_2020= pd.read_csv('2020.csv')
+def similar(input1,input2):
+    return SequenceMatcher(None,input1,input2).ratio()
 
+DF_cleveland =pd.read_csv('heart-disease.cleveland.csv')
+DF_hungarian= pd.read_csv('heart-disease.hungarian.csv')
+DF_switzerland= pd.read_csv('heart-disease.switzerland.csv')
+
+
+print(DF_hungarian.shape)
+print(DF_cleveland.shape)
+print(DF_switzerland.shape)
+
+colum= pd.DataFrame(False,index=DF_cleveland.columns,columns=['H','C','S'])
+colum.C = True
+
+for col in DF_hungarian.columns:
+    for incol in colum.index:
+        if(similar(col,incol)>0.7):
+            colum.at[incol,'H']=True
+
+for col in DF_switzerland.columns:
+    for incol in colum.index:
+        if(similar(col,incol)>0.7):
+            colum.at[incol,'S']=True
+
+colum[colum.H & colum.C & colum.S]
+print(colum)
+
+select_colum = [
+    'age',
+    'sex',
+    'cp',
+    'trestbps',
+    'chol',
+    'fbs',
+    'restecg',
+    'thalach',
+    'exang',
+    'oldpeak',
+    'slope',
+    'ca',
+    'thal',
+    'num'
+]
